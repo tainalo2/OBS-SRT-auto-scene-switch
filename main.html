@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>SRT auto scene switch</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+</head>
+<body>
+    <label>
+        STATE : 
+    </label>
+    <span id="state"; style="color:#ff0000";>
+        OFF
+    </span>
+    <br>
+    <label>
+        SRT source name : 
+    </label>
+    <input id="srt_source">
+    <br>
+    <label>
+        MAIN scene name : 
+    </label>
+    <input id="main_scene">
+    <br>
+    <label>
+        BACK scene name : 
+    </label>
+    <input id="back_scene">
+    <br>
+    <button type="button" onclick="linkToOBS();">LINK TO OBS</button>
+    <script>
+        function linkToOBS(){
+            // Selecting the input element and get its value 
+            var srt = document.getElementById("srt_source").value;
+            var main = document.getElementById("main_scene").value;
+            var back = document.getElementById("back_scene").value;
+            var wsUri = "ws://localhost:4444";
+            console.log("trying connection to server and OBS",wsUri);
+			ws = new WebSocket(wsUri);
+            ws.onmessage = function(msg) {
+                console.log("message from server received");
+                if (JSON.parse(msg.data)["message-id"] == "np"){
+                    console.log("np id message");
+                    console.log(msg.data);
+                }
+                if (JSON.parse(msg.data)["update-type"] == "MediaEnded" && JSON.parse(msg.data).sourceName == srt){
+                    ws.send("{\"message-id\" : \"np\", \"request-type\" : \"SetCurrentScene\", \"scene-name\" : \""+back+"\"}");
+                }
+                else if(JSON.parse(msg.data).transform.sourceHeight != 0 && JSON.parse(msg.data)["item-name"] == srt){
+                    ws.send("{\"message-id\" : \"np\", \"request-type\" : \"SetCurrentScene\", \"scene-name\" : \""+main+"\"}");
+                }
+			}
+            ws.onopen = function() {
+			    //ws.send("Open for data");
+			    console.log("connected to server");
+				document.getElementById("state").innerHTML = "ON";
+				document.getElementById("state").style.color = "#4fd800";
+			}
+			ws.onclose = function() {
+				// in case of lost connection tries to reconnect every 3 secs
+				setTimeout(linkToOBS,3000);
+			}
+        }
+    </script>
+</body>
+</html>
