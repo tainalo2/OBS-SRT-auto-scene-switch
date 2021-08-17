@@ -1,0 +1,205 @@
+[
+    {
+        "id": "90837315b07ce097",
+        "type": "websocket in",
+        "z": "9925173609099081",
+        "name": "OBS WS IN",
+        "server": "7022d170db8ccb79",
+        "client": "",
+        "x": 90,
+        "y": 200,
+        "wires": [
+            [
+                "3d42ef8c11b8ce36"
+            ]
+        ]
+    },
+    {
+        "id": "3d42ef8c11b8ce36",
+        "type": "json",
+        "z": "9925173609099081",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 290,
+        "y": 200,
+        "wires": [
+            [
+                "235f7c8a3f8607ab",
+                "9cca1a1efd39f5b4"
+            ]
+        ]
+    },
+    {
+        "id": "235f7c8a3f8607ab",
+        "type": "switch",
+        "z": "9925173609099081",
+        "name": "",
+        "property": "payload.update-type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "MediaEnded",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 470,
+        "y": 180,
+        "wires": [
+            [
+                "f53bc21bb366cc51"
+            ]
+        ]
+    },
+    {
+        "id": "f53bc21bb366cc51",
+        "type": "switch",
+        "z": "9925173609099081",
+        "name": "CHECK SOURCE",
+        "property": "payload.sourceName",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "SRT Source",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 180,
+        "wires": [
+            [
+                "124d56038d013b1c"
+            ]
+        ]
+    },
+    {
+        "id": "124d56038d013b1c",
+        "type": "function",
+        "z": "9925173609099081",
+        "name": "Set scene BACK",
+        "func": "msg.payload = {\"message-id\" : \"np\", \"request-type\" : \"SetCurrentScene\", \"scene-name\" : \"BACK\"};\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 180,
+        "wires": [
+            [
+                "30acde82953dbd08"
+            ]
+        ]
+    },
+    {
+        "id": "9cca1a1efd39f5b4",
+        "type": "switch",
+        "z": "9925173609099081",
+        "name": "",
+        "property": "payload.transform.sourceHeight",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "0",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "9e6de0fe873275d9"
+            ]
+        ]
+    },
+    {
+        "id": "9e6de0fe873275d9",
+        "type": "switch",
+        "z": "9925173609099081",
+        "name": "CHECK SOURCE 2",
+        "property": "payload.item-name",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "SRT Source",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 220,
+        "wires": [
+            [
+                "b3365977d7941b3b"
+            ]
+        ]
+    },
+    {
+        "id": "b3365977d7941b3b",
+        "type": "function",
+        "z": "9925173609099081",
+        "name": "Set scene MAIN",
+        "func": "msg.payload = {\"message-id\" : \"np\", \"request-type\" : \"SetCurrentScene\", \"scene-name\" : \"MAIN\"};\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 220,
+        "wires": [
+            [
+                "30acde82953dbd08"
+            ]
+        ]
+    },
+    {
+        "id": "30acde82953dbd08",
+        "type": "json",
+        "z": "9925173609099081",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1150,
+        "y": 140,
+        "wires": [
+            [
+                "058fc07c89e034d7"
+            ]
+        ]
+    },
+    {
+        "id": "058fc07c89e034d7",
+        "type": "websocket out",
+        "z": "9925173609099081",
+        "name": "OBS WS OUT",
+        "server": "7022d170db8ccb79",
+        "client": "",
+        "x": 1300,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "7022d170db8ccb79",
+        "type": "websocket-listener",
+        "path": "ws://OBS_WS_IP:OBS_WS_PORT",
+        "wholemsg": "false"
+    }
+]
